@@ -324,7 +324,15 @@ compute.aggte <- function(MP,
     # note: event times can be negative here.
     # note: event time = 0 corresponds to "on impact"
     #eseq <- unique(t-group)
-    eseq <- unique(originalt - originalgroup)
+    distancia <- originalt - originalgroup
+    collapse_vector <- 
+    ifelse(distancia >= -3 & distancia < -1,-2,
+           ifelse(distancia == -1, -1,
+                  ifelse(distancia == 0, 0,
+                         ifelse(distancia >= 1 & distancia < 4, 1, 5))))
+    
+    #eseq <- unique(originalt - originalgroup)
+    eseq <- unique(collapse_vector)
     eseq <- eseq[order(eseq)]
 
     # if the user specifies balance_e, then we are going to
@@ -336,7 +344,8 @@ compute.aggte <- function(MP,
     if (!is.null(balance_e)) {
       include.balanced.gt <- (t2orig(maxT) - originalgroup >= balance_e)
 
-      eseq <- unique(originalt[include.balanced.gt] - originalgroup[include.balanced.gt])
+      # eseq <- unique(originalt[include.balanced.gt] - originalgroup[include.balanced.gt])
+      eseq <- unique(collapse_vector[include.balanced.gt])
       eseq <- eseq[order(eseq)]
 
       eseq <- eseq[ (eseq <= balance_e) & (eseq >= balance_e - t2orig(maxT) + t2orig(1))]
@@ -346,11 +355,12 @@ compute.aggte <- function(MP,
     # only looks at some event times
     eseq <- eseq[ (eseq >= min_e) & (eseq <= max_e) ]
 
+    
     # compute atts that are specific to each event time
     dynamic.att.e <- sapply(eseq, function(e) {
       # keep att(g,t) for the right g&t as well as ones that
       # are not trimmed out from balancing the sample
-      whiche <- which( (originalt - originalgroup == e) & (include.balanced.gt) )
+      whiche <- which( (collapse_vector == e) & (include.balanced.gt) )
       atte <- att[whiche]
       pge <- pg[whiche]/(sum(pg[whiche]))
       sum(atte*pge)
@@ -358,7 +368,7 @@ compute.aggte <- function(MP,
 
     # compute standard errors for dynamic effects
     dynamic.se.inner <- lapply(eseq, function(e) {
-      whiche <- which( (originalt - originalgroup == e) & (include.balanced.gt) )
+      whiche <- which( (collapse_vector == e) & (include.balanced.gt) )
       pge <- pg[whiche]/(sum(pg[whiche]))
       wif.e <- wif(whiche, pg, weights.ind, G, group)
       inf.func.e <- as.numeric(get_agg_inf_func(att=att,
