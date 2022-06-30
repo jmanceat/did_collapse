@@ -326,10 +326,19 @@ compute.aggte <- function(MP,
     #eseq <- unique(t-group)
     distancia <- originalt - originalgroup
     collapse_vector <- 
-    ifelse(distancia >= -3 & distancia < -1,-2,
+    
+    #ifelse(distancia >= -3 & distancia < -1,-2,
+    #       ifelse(distancia == -1, -1,
+    #              ifelse(distancia == 0, 0,
+    #                     ifelse(distancia >= 1 & distancia < 4, 1, 5))))
+    
+    # Catastro 
+    ifelse(distancia >= -4 & distancia < -1,-2,
            ifelse(distancia == -1, -1,
                   ifelse(distancia == 0, 0,
-                         ifelse(distancia >= 1 & distancia < 4, 1, 5))))
+                         ifelse(distancia >= 1 & distancia < 5, 1, 
+                                ifelse(distancia >= 5 & distancia < 9, 2,
+                                       ifelse(distancia >= 9 & distancia < 13, 3, 5))))))
     
     #eseq <- unique(originalt - originalgroup)
     eseq <- unique(collapse_vector)
