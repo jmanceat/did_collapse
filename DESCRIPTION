@@ -1,4 +1,4 @@
-Package: did_collapse
+Package: didcollapse
 Title: Treatment Effects with Multiple Periods and Groups
 Version: 2.2.0.901
 Authors@R: c(person("Brantly", "Callaway", email = "brantly.callaway@uga.edu", role = c("aut", "cre")), person("Pedro H. C.", "Sant'Anna", email="pedro.h.santanna@vanderbilt.edu", role = c("aut")))
